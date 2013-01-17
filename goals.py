@@ -354,10 +354,18 @@ def CheckMatchSilkTrader(g):
 
     return ret
 
+def CheckMatchDHARMAInitiative(g):
+    """ Set aside 8+ Islands """
+    ret = []
+    for pdeck in g.get_player_decks():
+        (player, deck) = (pdeck.player_name, pdeck.deck)
+        n = deck.get(dominioncards.Island, 0)
+        if n >= 8:
+            ret.append(achievement(player,
+                                   'Retire to %d Islands' % n, n))
+
 # Who Needs Green Cards?
-# vineyards award would be nice. how about "sideways" ... http://www.sideways-movie.com/sideways.jpg
 # Underboss/Mafia Don/Godfather for scoring 30/40/50 VP with Goons?
-# DHARMA Initiative: set aside 8+ Islands
 
 GroupFuncs([CheckMatchCarny, CheckMatchGardener, CheckMatchDukeOfEarl,
             CheckMatchSilkTrader, CheckMatchVintner], 'vvp')
@@ -400,6 +408,35 @@ def CheckMatchBully(g):
 # Empty Throne Room
 # Empty Kings Court
 # Arrested Development: Bought 3+ Develop cards without ever using them
+
+# == Number of piles depleted
+def num_piles_depleted(g):
+    piles = 0
+    players = len(g.all_player_names())
+    for card, count in g.total_cards_accumulated().iteritems():
+        if card.num_copies_per_game() == count:
+            piles += 1
+    return piles
+
+def check_piler(g, n):
+    ret = []
+    if num_piles_depleted(g)==n:
+        for player in g.get_player_decks():
+            if player.WinPoints() > 1.0:
+                ret += [achievement(player.name(), "Won and depleted %d piles" % n)]
+    return ret
+
+def CheckmatchFourPiler(g):
+    """ Win the game and deplete 4 piles"""
+    check_piler(g,4)
+
+def CheckmatchFivePiler(g):
+    """ Win the game and deplete 5 piles"""
+    check_piler(g,5)
+
+def CheckmatchSixPiler(g):
+    """ Win the game and deplete 6 piles"""
+    check_piler(g,6)
 
 # == Number of Cards acquired
 

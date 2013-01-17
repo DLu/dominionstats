@@ -341,6 +341,9 @@ class Game(object):
         for turn in self.get_turns():
             for accumed_card in turn.player_accumulates():
                 ret[accumed_card] += 1
+            for name, change in turn.get_opp_info().iteritems():
+                for card in change.accumulates():
+                    ret[card] += 1
         return ret
 
     def cards_accumalated_per_player(self):
